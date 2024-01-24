@@ -13,7 +13,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           Painel do parceiro &copy; Pizza Pro - {new Date().getFullYear()}{' '}
         </footer>
       </div>
-      <div className="">{children}</div>
+      <div className="flex items-center justify-center ">{children}</div>
     </div>
   )
 }
