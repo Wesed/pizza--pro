@@ -33,7 +33,7 @@ export function Form() {
         action: {
           label: 'Login',
           onClick: () => router.push('/sign-in'),
-        }
+        },
       })
     } catch {
       toast.error('Ocorreu um erro ao cadastrar o estabelecimento.')
