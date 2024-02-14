@@ -11,7 +11,7 @@ export default function SignIn() {
   return (
     <div className="p-8">
       {/* usa react slot, o link possui as mesmas propriedades que o btn, e o btn atua como link */}
-      <Button variant="outline" asChild className="absolute right-8 top-8">
+      <Button variant="ghost" asChild className="absolute right-8 top-8">
         <Link href="/sign-up">Novo estabelecimento</Link>
       </Button>
 

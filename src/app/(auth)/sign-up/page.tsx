@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function SignUp() {
   return (
     <div className="p-8">
-      <Button variant="outline" asChild className="absolute right-8 top-8">
+      <Button variant="ghost" asChild className="absolute right-8 top-8">
         <Link href="/sign-in">Fazer login</Link>
       </Button>
       <div className="flex w-[350px] flex-col justify-center gap-6">
