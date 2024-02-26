@@ -46,9 +46,8 @@ export function Form() {
           onClick: () => router.push(`/sign-in?email=${data.email}`),
         },
       })
-    } catch(errr) {
-      alert(errr)
-      // toast.error('Ocorreu um erro ao cadastrar o estabelecimento.')
+    } catch {
+      toast.error('Ocorreu um erro ao cadastrar o estabelecimento.')
     }
   }
 
