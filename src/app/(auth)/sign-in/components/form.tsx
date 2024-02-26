@@ -1,8 +1,10 @@
 'use client'
 
+import { signIn } from '@/api/sign-in'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -20,9 +22,17 @@ export function Form() {
     formState: { disabled, errors, isSubmitting },
   } = useForm<SignInFormSchema>()
 
-  function handleSignIn(data: SignInFormSchema) {
-    toast.success('Um link de login foi enviado para seu email.')
-    console.log(data)
+  const { mutateAsync: authenticate} = useMutation({
+    mutationFn: signIn,
+  })
+
+  async function handleSignIn(data: SignInFormSchema) {
+    try {
+      await authenticate({ email: data.email })
+      toast.success('Um link de login foi enviado para seu email.')
+    } catch {
+      toast.error('Credenciais inválidas, o email está incorreto ou não está cadastrado.')
+    }
   }
 
   return (
