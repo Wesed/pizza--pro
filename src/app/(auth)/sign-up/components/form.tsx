@@ -1,8 +1,10 @@
 'use client'
 
+import { registerStore } from '@/api/register-store'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -23,20 +25,30 @@ export function Form() {
   const {
     register,
     handleSubmit,
-    formState: { disabled, errors, isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<SignUpFormSchema>()
 
-  function handleSignUp(data: SignUpFormSchema) {
+  const { mutateAsync: registerStoreFn } = useMutation({
+    mutationFn: registerStore, 
+  })
+
+  async function handleSignUp(data: SignUpFormSchema) {
     try {
-      console.log(data)
+      await registerStoreFn({
+        storeName: data.storeName,
+        managerName: data.managerName,
+        phone: data.phone,
+        email: data.email,
+      })
       toast.success('Estabelecimento cadastrado com sucesso!', {
         action: {
           label: 'Login',
-          onClick: () => router.push('/sign-in'),
+          onClick: () => router.push(`/sign-in?email=${data.email}`),
         },
       })
-    } catch {
-      toast.error('Ocorreu um erro ao cadastrar o estabelecimento.')
+    } catch(errr) {
+      alert(errr)
+      // toast.error('Ocorreu um erro ao cadastrar o estabelecimento.')
     }
   }
 

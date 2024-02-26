@@ -8,6 +8,8 @@ import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { useSearchParams } from 'next/navigation'
+
 
 const signInForm = z.object({
   email: z.string().email(),
@@ -16,11 +18,17 @@ const signInForm = z.object({
 type SignInFormSchema = z.infer<typeof signInForm>
 
 export function Form() {
+  const searchParams = useSearchParams()
+
   const {
     register,
     handleSubmit,
     formState: { disabled, errors, isSubmitting },
-  } = useForm<SignInFormSchema>()
+  } = useForm<SignInFormSchema>({
+    defaultValues: {
+      email: searchParams.get('email') ?? '',
+    },
+  })
 
   const { mutateAsync: authenticate} = useMutation({
     mutationFn: signIn,
