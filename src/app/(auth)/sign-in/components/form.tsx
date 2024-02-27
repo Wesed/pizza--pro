@@ -10,7 +10,6 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { useSearchParams } from 'next/navigation'
 
-
 const signInForm = z.object({
   email: z.string().email(),
 })
@@ -30,7 +29,7 @@ export function Form() {
     },
   })
 
-  const { mutateAsync: authenticate} = useMutation({
+  const { mutateAsync: authenticate } = useMutation({
     mutationFn: signIn,
   })
 
@@ -39,7 +38,9 @@ export function Form() {
       await authenticate({ email: data.email })
       toast.success('Um link de login foi enviado para seu email.')
     } catch {
-      toast.error('Credenciais inválidas, o email está incorreto ou não está cadastrado.')
+      toast.error(
+        'Credenciais inválidas, o email está incorreto ou não está cadastrado.',
+      )
     }
   }
 

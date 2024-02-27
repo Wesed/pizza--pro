@@ -27,9 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={roboto.className}>
         <ThemeProvider attribute="class" defaultTheme="system">
-          <ReactQueryProvider>
-          {children}
-          </ReactQueryProvider>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
         </ThemeProvider>
         <Toaster richColors />
       </body>

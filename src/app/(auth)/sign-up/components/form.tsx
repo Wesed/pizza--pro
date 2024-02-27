@@ -29,7 +29,7 @@ export function Form() {
   } = useForm<SignUpFormSchema>()
 
   const { mutateAsync: registerStoreFn } = useMutation({
-    mutationFn: registerStore, 
+    mutationFn: registerStore,
   })
 
   async function handleSignUp(data: SignUpFormSchema) {
