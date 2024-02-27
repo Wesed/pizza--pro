@@ -1,6 +1,7 @@
 import { getManagedStore } from '@/api/get-managed-store'
 import { Button } from '@/components/ui/button'
 import {
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -10,15 +11,24 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { updateProfile } from '@/api/update-profile'
+import { toast } from 'sonner'
 
-export function StoreProfileDialog() {
+interface StoreProfileDialog {
+  handleCloseModalDialog: () => void
+}
+
+export function StoreProfileDialog({
+  handleCloseModalDialog,
+}: StoreProfileDialog) {
   const { data: managedStore } = useQuery({
     queryKey: ['managedStore'],
     queryFn: getManagedStore,
+    staleTime: Infinity,
   })
 
   const storeProfileSchema = z.object({
@@ -28,7 +38,11 @@ export function StoreProfileDialog() {
 
   type StoreProfileSchema = z.infer<typeof storeProfileSchema>
 
-  const { register, handleSubmit } = useForm<StoreProfileSchema>({
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<StoreProfileSchema>({
     resolver: zodResolver(storeProfileSchema),
     /* values no lugar de default pq os dados nao estao prontos qd o form e carregado. 
       enquanto q o resolver fica monitorando os valores ate ficar pronto   
@@ -39,8 +53,19 @@ export function StoreProfileDialog() {
     },
   })
 
-  function updateManagedInfo(data: StoreProfileSchema) {
-    console.log(data)
+  const { mutateAsync: updateProfileFn } = useMutation({
+    mutationFn: updateProfile,
+  })
+
+  async function updateManagedInfo(data: StoreProfileSchema) {
+    try {
+      await updateProfileFn({ name: data.name, description: data.description })
+      handleCloseModalDialog()
+      toast.success('Perfil atualizado com sucesso!')
+    } catch (err) {
+      toast.error('Houve um erro ao atualizar, tente novamente.')
+      console.log('erro:', err as string)
+    }
   }
 
   return (
@@ -73,11 +98,13 @@ export function StoreProfileDialog() {
           </div>
         </div>
         <DialogFooter>
-          <Button type="button" variant="ghost">
-            Cancelar
-          </Button>
-          <Button type="submit" variant="success">
-            Salvar
+          <DialogClose asChild>
+            <Button disabled={isSubmitting} type="button" variant="ghost">
+              Cancelar
+            </Button>
+          </DialogClose>
+          <Button disabled={isSubmitting} type="submit" variant="success">
+            {isSubmitting ? 'Salvando...' : 'Salvar'}
           </Button>
         </DialogFooter>
       </form>

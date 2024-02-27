@@ -16,8 +16,10 @@ import { getManagedStore } from '@/api/get-managed-store'
 import { Skeleton } from '../../ui/skeleton'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { StoreProfileDialog } from './store-profile-dialog'
+import { useState } from 'react'
 
 export function AccountMenu() {
+  const [openDialog, setOpenDialog] = useState(false)
   const { data: managedStore, isLoading: isLoadingManagedStore } = useQuery({
     queryKey: ['managedStore'],
     queryFn: getManagedStore,
@@ -26,10 +28,15 @@ export function AccountMenu() {
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ['profile'],
     queryFn: getProfile,
+    staleTime: Infinity,
   })
 
+  function handleCloseModalDialog() {
+    setOpenDialog(false)
+  }
+
   return (
-    <Dialog>
+    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -75,7 +82,7 @@ export function AccountMenu() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <StoreProfileDialog />
+      <StoreProfileDialog handleCloseModalDialog={handleCloseModalDialog} />
     </Dialog>
   )
 }
