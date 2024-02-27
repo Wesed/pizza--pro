@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -25,6 +25,7 @@ interface StoreProfileDialog {
 export function StoreProfileDialog({
   handleCloseModalDialog,
 }: StoreProfileDialog) {
+  const queryClient = useQueryClient()
   const { data: managedStore } = useQuery({
     queryKey: ['managedStore'],
     queryFn: getManagedStore,
@@ -55,6 +56,18 @@ export function StoreProfileDialog({
 
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
+    onSuccess(_, { name, description }) {
+      // pega o cache do react-query e atualiza as infos sem precisar de refresh
+      const cached = queryClient.getQueryData(['managedStore'])
+
+      if (cached) {
+        queryClient.setQueryData(['managedStore'], {
+          ...cached,
+          name,
+          description,
+        })
+      }
+    },
   })
 
   async function updateManagedInfo(data: StoreProfileSchema) {
