@@ -1,10 +1,10 @@
 import { Metadata } from 'next'
-import { MonthRevenueCard } from './month-revenue-card'
-import { MonthOrdersAmountCard } from './mont-orders-amount-card'
-import { DayOrderAmountCard } from './day-orders-amount-card'
-import { MonthCanceledOrdersAmountCard } from './month-canceled-orders-amount-card'
-import { RevenueChart } from './revenue-chart'
-import { PopularProductsChart } from './popular-products-chart'
+import { MonthRevenueCard } from './components/month-revenue-card'
+import { MonthOrdersAmountCard } from './components/mont-orders-amount-card'
+import { DayOrderAmountCard } from './components/day-orders-amount-card'
+import { MonthCanceledOrdersAmountCard } from './components/month-canceled-orders-amount-card'
+import { RevenueChart } from './components/revenue-chart'
+import { PopularProductsChart } from './components/popular-products-chart'
 
 export const metadata: Metadata = {
   title: 'Dashboard',
