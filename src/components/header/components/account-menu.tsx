@@ -10,15 +10,18 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '../../ui/button'
 import { Building, ChevronDown, LogOut } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { getProfile } from '@/api/get-profile'
 import { getManagedStore } from '@/api/get-managed-store'
 import { Skeleton } from '../../ui/skeleton'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { StoreProfileDialog } from './store-profile-dialog'
 import { useState } from 'react'
+import { signOut } from '@/api/sign-out'
+import { useRouter } from 'next/navigation'
 
 export function AccountMenu() {
+  const route = useRouter()
   const [openDialog, setOpenDialog] = useState(false)
   const { data: managedStore, isLoading: isLoadingManagedStore } = useQuery({
     queryKey: ['managedStore'],
@@ -34,6 +37,16 @@ export function AccountMenu() {
   function handleCloseModalDialog() {
     setOpenDialog(false)
   }
+
+  const { mutateAsync: signOutFn, isPending: isSigninOut } = useMutation({
+    mutationFn: signOut,
+    onSuccess: () => {
+      /* o replace substitui a rota, ao inves de redirecionar, isso impede 
+        q o usuario clique em voltar e caia na dashboard
+      */
+      route.replace('/sign-in')
+    },
+  })
 
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
@@ -75,9 +88,20 @@ export function AccountMenu() {
             </DropdownMenuItem>
           </DialogTrigger>
 
-          <DropdownMenuItem className="cursor-pointer text-rose-500 dark:text-rose-400">
-            <LogOut className="mr-2 size-4" />
-            <span>Sair</span>
+          <DropdownMenuItem
+            asChild
+            className="cursor-pointer text-rose-500 dark:text-rose-400"
+            disabled={isSigninOut}
+          >
+            <button
+              className="w-full"
+              onClick={() => {
+                signOutFn()
+              }}
+            >
+              <LogOut className="mr-2 size-4" />
+              <span>Sair</span>
+            </button>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
