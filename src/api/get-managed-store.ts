@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 
-interface GetManagedStoreResponse {
+export interface GetManagedStoreResponse {
   name: string
   id: string
   createdAt: Date | null

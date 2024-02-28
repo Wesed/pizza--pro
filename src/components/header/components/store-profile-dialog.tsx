@@ -1,4 +1,7 @@
-import { getManagedStore } from '@/api/get-managed-store'
+import {
+  GetManagedStoreResponse,
+  getManagedStore,
+} from '@/api/get-managed-store'
 import { Button } from '@/components/ui/button'
 import {
   DialogClose,
@@ -34,7 +37,7 @@ export function StoreProfileDialog({
 
   const storeProfileSchema = z.object({
     name: z.string(),
-    description: z.string(),
+    description: z.string().nullable(),
   })
 
   type StoreProfileSchema = z.infer<typeof storeProfileSchema>
@@ -54,18 +57,38 @@ export function StoreProfileDialog({
     },
   })
 
+  function updateManagedStoreCache({ name, description }: StoreProfileSchema) {
+    // pega o cache do react-query e atualiza as infos sem precisar de refresh
+    const cached = queryClient.getQueryData<GetManagedStoreResponse>([
+      'managedStore',
+    ])
+
+    if (cached) {
+      queryClient.setQueryData<GetManagedStoreResponse>(['managedStore'], {
+        ...cached,
+        name,
+        description,
+      })
+    }
+
+    return { cached } // informacoes antes das alteracoes
+  }
+
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
-    onSuccess(_, { name, description }) {
-      // pega o cache do react-query e atualiza as infos sem precisar de refresh
-      const cached = queryClient.getQueryData(['managedStore'])
-
-      if (cached) {
-        queryClient.setQueryData(['managedStore'], {
-          ...cached,
-          name,
-          description,
-        })
+    /* interface otimista explicacao
+      diferente do onSucess. o onMutate faz a alteracao instantaneamente, msm se der erro.
+      Isso e valido pq nesse caso do profile, a chance de dar erro e quase nula.
+      Porem se  por algum motivo der erro, o onError fica responsavel por retornar
+      os dados p/ os valores antigos, atraves do cache.
+    */
+    onMutate({ name, description }) {
+      const { cached } = updateManagedStoreCache({ name, description })
+      return { previousProfile: cached }
+    },
+    onError(_, __, context) {
+      if (context?.previousProfile) {
+        updateManagedStoreCache(context.previousProfile)
       }
     },
   })
@@ -76,7 +99,8 @@ export function StoreProfileDialog({
       handleCloseModalDialog()
       toast.success('Perfil atualizado com sucesso!')
     } catch (err) {
-      toast.error('Houve um erro ao atualizar, tente novamente.')
+      toast.error('Houve um erro ao atualizar, nenhuma alteração foi feita.')
+      handleCloseModalDialog()
       console.log('erro:', err as string)
     }
   }
