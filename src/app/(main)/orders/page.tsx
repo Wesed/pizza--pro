@@ -33,7 +33,7 @@ export default function Orders() {
               <OrderTableBody />
             </Table>
           </div>
-          <Pagination pageIndex={0} perPage={10} />
+          <Pagination />
         </div>
       </div>
     </>

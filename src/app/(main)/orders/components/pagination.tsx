@@ -3,6 +3,8 @@
 import { getOrders } from '@/api/get-orders'
 import { Button } from '@/components/ui/button'
 import { useQuery } from '@tanstack/react-query'
+import { useSearchParams, usePathname, useRouter } from 'next/navigation'
+import { z } from 'zod'
 import {
   ChevronsLeft,
   ChevronLeft,
@@ -10,20 +12,35 @@ import {
   ChevronsRight,
 } from 'lucide-react'
 
-export interface PaginationProps {
-  pageIndex: number
-  perPage: number
-}
+export function Pagination() {
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const { replace } = useRouter()
 
-export function Pagination({ pageIndex, perPage }: PaginationProps) {
+  /* explicacao
+    o backend trabalha com os indices comecando no 0, mas seria estranho
+    exibir pagina 0 na interface, pois toda pagina comeca em 1, entao o param
+    page inicia em 1, mas e salvo como 0 (page - 1), pro back entender
+  */
+  const pageIndex = z.coerce
+    .number()
+    .transform((page) => page - 1)
+    .parse(searchParams.get('page') ?? '1')
+
   const { data: result } = useQuery({
     queryKey: ['orders'],
-    queryFn: getOrders,
+    queryFn: () => getOrders({ pageIndex }),
   })
 
   const totalCount = result?.meta.totalCount || 0
-
+  const perPage = result?.meta.perPage || 1
   const pages = Math.ceil(totalCount / perPage) || 1
+
+  function onPageChange(pageIndex: number) {
+    const params = new URLSearchParams(searchParams)
+    params.set('page', String(pageIndex + 1))
+    replace(`${pathname}?${params.toString()}`)
+  }
 
   return (
     <div className="flex items-center justify-between">
@@ -36,19 +53,39 @@ export function Pagination({ pageIndex, perPage }: PaginationProps) {
           Página {pageIndex + 1} de {pages}
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="size-8 p-0">
+          <Button
+            onClick={() => onPageChange(0)}
+            disabled={pageIndex === 0}
+            variant="outline"
+            className="size-8 p-0"
+          >
             <ChevronsLeft className="size-4" />
             <span className="sr-only">Primeira página</span>
           </Button>
-          <Button variant="outline" className="size-8 p-0">
+          <Button
+            onClick={() => onPageChange(pageIndex - 1)}
+            disabled={pageIndex === 0}
+            variant="outline"
+            className="size-8 p-0"
+          >
             <ChevronLeft className="size-4" />
             <span className="sr-only">Página anterior</span>
           </Button>
-          <Button variant="outline" className="size-8 p-0">
+          <Button
+            onClick={() => onPageChange(pageIndex + 1)}
+            disabled={pages <= pageIndex + 1}
+            variant="outline"
+            className="size-8 p-0"
+          >
             <ChevronRight className="size-4" />
             <span className="sr-only">Próxima página</span>
           </Button>
-          <Button variant="outline" className="size-8 p-0">
+          <Button
+            onClick={() => onPageChange(pages - 1)}
+            disabled={pages <= pageIndex + 1}
+            variant="outline"
+            className="size-8 p-0"
+          >
             <ChevronsRight className="size-4" />
             <span className="sr-only">Última página</span>
           </Button>
