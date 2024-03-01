@@ -17,6 +17,10 @@ export function Pagination() {
   const pathname = usePathname()
   const { replace } = useRouter()
 
+  const orderId = searchParams.get('orderId')
+  const customerName = searchParams.get('customerName')
+  const status = searchParams.get('status')
+
   /* explicacao
     o backend trabalha com os indices comecando no 0, mas seria estranho
     exibir pagina 0 na interface, pois toda pagina comeca em 1, entao o param
@@ -28,8 +32,14 @@ export function Pagination() {
     .parse(searchParams.get('page') ?? '1')
 
   const { data: result } = useQuery({
-    queryKey: ['orders'],
-    queryFn: () => getOrders({ pageIndex }),
+    queryKey: ['orders', pageIndex, orderId, customerName, status],
+    queryFn: () =>
+      getOrders({
+        pageIndex,
+        orderId,
+        customerName,
+        status: status === 'all' ? null : status,
+      }),
   })
 
   const totalCount = result?.meta.totalCount || 0

@@ -10,6 +10,10 @@ import { z } from 'zod'
 export function OrderTableBody() {
   const searchParams = useSearchParams()
 
+  const orderId = searchParams.get('orderId')
+  const customerName = searchParams.get('customerName')
+  const status = searchParams.get('status')
+
   const pageIndex = z.coerce
     .number()
     .transform((page) => page - 1)
@@ -24,8 +28,14 @@ export function OrderTableBody() {
       Ex: to na pag1, se for pra pag2, vai carregar, mas se voltar pra pag1,
       vai usar do cache 
     */
-    queryKey: ['orders', pageIndex],
-    queryFn: () => getOrders({ pageIndex }),
+    queryKey: ['orders', pageIndex, orderId, customerName, status],
+    queryFn: () =>
+      getOrders({
+        pageIndex,
+        orderId,
+        customerName,
+        status: status === 'all' ? null : status,
+      }),
   })
 
   return (
