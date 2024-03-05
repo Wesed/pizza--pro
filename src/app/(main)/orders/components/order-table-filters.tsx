@@ -58,7 +58,14 @@ export function OrderTableFilters() {
     updateParam('status', status)
   }
 
-F
+  function handleClearFilters() {
+    router.push('/orders')
+    reset({
+      orderId: '',
+      customerName: '',
+      status: 'all',
+    })
+  }
 
   return (
     <form

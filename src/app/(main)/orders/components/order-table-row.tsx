@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { ArrowRight, Search, X } from 'lucide-react'
+import { ArrowRight, X } from 'lucide-react'
 import { OrderStatus } from './order-status'
 
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { OrderDetails } from './order-details'
 
 interface OrderTableRowProps {
   order: {
@@ -21,10 +22,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
   return (
     <TableRow>
       <TableCell>
-        <Button variant="outline" size="xs">
-          <Search className="size-3" />
-          <span className="sr-only">Detalhes do pedido</span>
-        </Button>
+        <OrderDetails />
       </TableCell>
       <TableCell className="font-mono text-xs font-medium">{orderId}</TableCell>
       <TableCell className="text-muted-foreground">
