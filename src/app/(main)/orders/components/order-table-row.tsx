@@ -22,7 +22,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
   return (
     <TableRow>
       <TableCell>
-        <OrderDetails />
+        <OrderDetails orderId={order.orderId} />
       </TableCell>
       <TableCell className="font-mono text-xs font-medium">{orderId}</TableCell>
       <TableCell className="text-muted-foreground">
