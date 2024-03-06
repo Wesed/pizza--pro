@@ -6,6 +6,7 @@ import { OrderStatus } from './order-status'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { OrderDetails } from './order-details'
+import { CancelButton } from './cancel-button'
 
 interface OrderTableRowProps {
   order: {
@@ -48,10 +49,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
         </Button>
       </TableCell>
       <TableCell>
-        <Button variant="ghost" size="xs">
-          <X className="mr-2 size-3" />
-          Cancelar
-        </Button>
+        <CancelButton status={order.status} id={order.orderId} />
       </TableCell>
     </TableRow>
   )

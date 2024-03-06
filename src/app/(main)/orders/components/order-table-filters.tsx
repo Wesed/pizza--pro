@@ -46,8 +46,10 @@ export function OrderTableFilters() {
 
   /* DRY - Dont Repeat Yourself */
   function updateParam(key: string, value: string | undefined) {
-    if (value) params.set(key, value)
-    else params.delete(key)
+    if (value) {
+      params.set(key, value)
+      router.push(`${pathname}?${params.toString()}`)
+    } else params.delete(key)
   }
 
   function handleFilter({ orderId, customerName, status }: OrderFiltersSchema) {
