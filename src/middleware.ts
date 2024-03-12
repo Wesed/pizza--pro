@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { api } from './lib/axios'
-import { isAxiosError } from 'axios'
-
 export async function middleware(request: NextRequest) {
   console.log('ponto')
   const token = request.cookies.get('auth')
