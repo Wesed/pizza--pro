@@ -23,7 +23,7 @@ import colors from 'tailwindcss/colors'
 import { DateRangePicker } from '../date-range-picker'
 import { DateRange } from 'react-day-picker'
 import { subDays } from 'date-fns'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 export function RevenueChart() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -38,6 +38,16 @@ export function RevenueChart() {
         to: dateRange?.to,
       }),
   })
+
+  // converte a receita q vem em centavos antes de enviar pro grafico
+  const charData = useMemo(() => {
+    return dailyRevenueInPeriod?.map((charItem) => {
+      return {
+        date: charItem.date,
+        receipt: charItem.receipt / 100,
+      }
+    })
+  }, [dailyRevenueInPeriod])
 
   return (
     <Card className="col-span-6">
@@ -56,9 +66,9 @@ export function RevenueChart() {
         </div>
       </CardHeader>
       <CardContent>
-        {dailyRevenueInPeriod && (
+        {charData && (
           <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={dailyRevenueInPeriod} style={{ fontSize: 12 }}>
+            <LineChart data={charData} style={{ fontSize: 12 }}>
               <XAxis dataKey="date" tickLine={false} axisLine={false} dy={16} />
               <YAxis
                 stroke="#888"
