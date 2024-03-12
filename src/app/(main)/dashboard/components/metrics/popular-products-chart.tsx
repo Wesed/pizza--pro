@@ -74,7 +74,7 @@ export function PopularProductsChart() {
                   )
                 }}
               >
-                {data.map((_, index) => (
+                {popularProducts.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index]}
