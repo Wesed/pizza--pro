@@ -6,6 +6,7 @@ import { getOrders } from '@/api/get-orders'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
 import { z } from 'zod'
+import { OrderTableSkeleton } from './order-table-skeleton'
 
 export function OrderTableBody() {
   const searchParams = useSearchParams()
@@ -19,7 +20,7 @@ export function OrderTableBody() {
     .transform((page) => page - 1)
     .parse(searchParams.get('page') ?? '1')
 
-  const { data: result } = useQuery({
+  const { data: result, isLoading: isLoadingOrders } = useQuery({
     /* explicacao 
       por padrao, o react query nao recarrega os dados pq a key nao mudou,
       e por isso usa oq tem no cache. o pageIndex serve pra ele entender que
@@ -40,6 +41,7 @@ export function OrderTableBody() {
 
   return (
     <TableBody>
+      {isLoadingOrders && <OrderTableSkeleton />}
       {result &&
         result.orders.map((order) => {
           return <OrderTableRow key={order.orderId} order={order} />
