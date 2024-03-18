@@ -11,6 +11,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
+    "types": ["vitest/globals"],
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -32,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "src/app/layout.tsx", "src/api/register.-restaurantts"  ],
+,   "src/app/layout.tsx", "src/api/register.-restaurants"  ],
   "exclude": [
     "node_modules"
   ]
