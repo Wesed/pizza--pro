@@ -1,6 +1,6 @@
 'use client'
 
-import { getOrders } from '@/api/get-orders'
+import { getOrders } from '../../../../api/get-orders'
 import { Button } from '@/components/ui/button'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
